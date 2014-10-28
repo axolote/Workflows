@@ -1,56 +1,34 @@
 #  Purpose of this script:
-# To fetch hydro data from the internet, parse, and visualize it
+# To fetch xml formatted data from the internet, parse, and visualize it
 
-import urllib3
-import json
-import datetime
+import xml.dom.minidom
 
-def printResults(data):
-    """ Use the json module to load the string data into a dictionary """
-    
-    theJSON = json.loads(data)
-    #print(theJSON)
-    
-    # access contents of json object
-    if "title" in theJSON["metadata"]:
-        print(theJSON["metadata"]["title"])
-    else: 
-        print("That element does not exist")
 
 def main():
-     """ Get the content of interest for parsing and printing """
+    # Get the content of interest from xml file for parsing and printing #
+    doc = xml.dom.minidom.parse("sample.xml")
      
-    #date checks
-    now = datetime.datetime.now()
-    print("Our current date and time is ") + str(datetime.datetime.now())
-    print(now.strftime("%Y%m%d"))
+    # print out the document node and the name of the first child tag
+    print doc.nodeName
+    print doc.firstChild.tagName
     
-    # open PoolManager to manage connections
-    http = urllib3.PoolManager()
-
-    # set url to json or geojson
-    # note, i need to figure out how to make a 7d date object in %Y%m%d format
-#     url = "http://waterdata.usgs.gov/nwis/dv/?dd_cd=04_00060_00003&format=img_stats&site_no=06730200&begin_date=" + now.strftime("%Y%m%d") + "&end_date=" + now.strftime("%Y%m%d")
-    url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson"
-    print(url)
+    # get a list of XML tags from the document and print each one
+    skills = doc.getElementsByTagName("skill")
+    print("{} skills".format(skills.length))
+    for skill in skills:
+        print(skill.getAttribute("name"))
     
-    # open a connection to the json or geojson URL using urllib3
-    weburl = http.request("GET", url)
-#     print(weburl)
+    # create a new XML tag and add it into the document
+    newSkill = doc.createElement("skill")
+    newSkill.setAttribute("name", "jQuery")
+    doc.firstChild.appendChild(newSkill)
+    print("\n")
     
-    # fetch and print status code to confirm success
-    status_code = weburl.status
-    print("result code: " + str(status_code))
- 
-    # now that url open, read some data and print it 
-    # if status code indicates success, print the data. Otherwise, print error message.
-    data = weburl.data
-    if (status_code == 200):
-        print("data: \n\n") + str(data)
-    else:
-        print("Received an error from server. Can't print results.")
-
-
-
+    # get a list of XML tags from the document and print each one
+    skills = doc.getElementsByTagName("skill")
+    print("{} skills".format(skills.length))
+    for skill in skills:
+        print(skill.getAttribute("name"))
+    
 if __name__ == "__main__" :
     main()
