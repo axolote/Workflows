@@ -12,7 +12,7 @@ index_url = root_url + '/2011/06/beautiful-nature-wallpapers-hd-hq.html'
 
 def get_page_urls():
     """ select urls of interest from web page and store in a list """
-    page = requests.get(index_url)
+    page = requests.get(index_url)  # status code 200 = "ok"
     soup = bs4.BeautifulSoup(page.text)
     # list comprehension to get list of urls
     return [a.attrs.get('href') for a in soup.select('div.post-body a[href$=".jpg"]')]
